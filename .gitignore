@@ -1,0 +1,29 @@
+# Generated extension packages and build output
+/GPT-Themes-*.zip
+/build/
+/dist/
+
+# Local dependencies and caches
+node_modules/
+.cache/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Temporary browser checks and test output
+/.tmp/
+/playwright-report/
+/test-results/
+*.log
+*.tmp
+
+# Local environment settings
+.env
+.env.*
+!.env.example
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini

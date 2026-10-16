@@ -1,0 +1,1117 @@
+/* ChatGPT UI Enhancer v0.8.24 - native app-shell titlebar/sidebar compatibility. */
+
+html.cgpt-ui-enhancer-active,
+html.cgpt-ui-enhancer-active body {
+  background: var(--cgpt-main-bg, var(--main-surface-primary, var(--bg-primary))) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Keep the background behind the ChatGPT app without rewriting every direct
+   body child. ChatGPT adds native floating UI during assistant text selection;
+   positioning all body children could make those popovers participate in layout
+   and make the page appear to zoom/shift. */
+html.cgpt-ui-enhancer-active .cgpt-ui-enhancer-app-root {
+  position: relative;
+  z-index: 1;
+}
+
+html.cgpt-ui-enhancer-active body > :not(.cgpt-ui-enhancer-app-root):not(#cgpt-ui-enhancer-bg-layer):not(#gptt-editor-root):not(#gptt-mini-launcher):not(style):not(script) {
+  max-width: 100vw;
+}
+
+#cgpt-ui-enhancer-bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--cgpt-chat-bg, var(--main-surface-primary, #212121));
+}
+
+html.cgpt-ui-enhancer-bg-chat #cgpt-ui-enhancer-bg-layer {
+  left: var(--cgpt-sidebar-width, 0px);
+}
+
+#cgpt-ui-enhancer-bg-layer .cgpt-bg-image,
+#cgpt-ui-enhancer-bg-layer .cgpt-bg-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#cgpt-ui-enhancer-bg-layer .cgpt-bg-image {
+  transform: scale(1.02);
+}
+
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar,
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i] {
+  background: var(--cgpt-sidebar-bg, var(--sidebar-surface-primary)) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--cgpt-border, var(--border-medium)) !important;
+}
+
+/* The current ChatGPT sidebar header also uses h-header-height. Do not use
+   that utility class to identify the conversation header: doing so paints the
+   "ChatGPT" wordmark row with the main-header color and creates a dark box. */
+html.cgpt-ui-enhancer-active #page-header,
+html.cgpt-ui-enhancer-active main header,
+html.cgpt-ui-enhancer-active main [data-testid="sticky-header"] {
+  background: var(--cgpt-header-bg, var(--main-surface-primary)) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--cgpt-border, var(--border-medium)) !important;
+}
+
+/* September 2026 app-shell layout: the fixed main titlebar now stretches
+   across the entire viewport, including the native sidebar's ChatGPT wordmark.
+   Painting it as a solid main-header color hides the native wordmark beneath
+   the bar. Leave only the portion over the expanded sidebar transparent and
+   preserve the user's configured header color over the conversation. Keep the
+   existing native wordmark, controls, and stacking order intact. */
+@media (min-width: 768px) {
+  html.cgpt-ui-enhancer-active:not([dir="rtl"])
+    [data-app-shell-frame][data-app-shell-sidebar-open="true"]:not(:has([data-testid="viewer-header"]))
+    main header[data-app-shell-titlebar="true"] {
+    background: linear-gradient(to right,
+      transparent 0 var(--app-shell-left-panel-width, 0px),
+      var(--cgpt-header-bg, var(--main-surface-primary, #212121))
+        var(--app-shell-left-panel-width, 0px) 100%) !important;
+  }
+
+  html.cgpt-ui-enhancer-active[dir="rtl"]
+    [data-app-shell-frame][data-app-shell-sidebar-open="true"]:not(:has([data-testid="viewer-header"]))
+    main header[data-app-shell-titlebar="true"] {
+    background: linear-gradient(to left,
+      transparent 0 var(--app-shell-left-panel-width, 0px),
+      var(--cgpt-header-bg, var(--main-surface-primary, #212121))
+        var(--app-shell-left-panel-width, 0px) 100%) !important;
+  }
+}
+
+/* The new app shell no longer uses #stage-slideover-sidebar or #sidebar-header.
+   Match its real navigation containers, not every <aside> or floating panel. */
+html.cgpt-ui-enhancer-active [data-app-shell-workspace-row]
+  > aside.app-shell-left-panel:has(#app-shell-sidebar),
+html.cgpt-ui-enhancer-active #app-shell-sidebar,
+html.cgpt-ui-enhancer-active #app-shell-sidebar > .bg-surface,
+html.cgpt-ui-enhancer-active #app-shell-sidebar .sidebar-navigation,
+html.cgpt-ui-enhancer-active nav[data-app-navigation-rail="true"] {
+  background-color: var(--cgpt-sidebar-bg, #171717) !important;
+}
+
+html.cgpt-ui-enhancer-active #app-shell-sidebar .sidebar-navigation > .contents > .h-toolbar {
+  color: var(--cgpt-sidebar-text, var(--text-primary, #ececec)) !important;
+  background-color: transparent !important;
+}
+
+html.cgpt-ui-enhancer-active #app-shell-sidebar .sidebar-navigation svg {
+  color: var(--cgpt-sidebar-icon, var(--cgpt-sidebar-text, #ececec)) !important;
+}
+
+/* The wordmark/search/sidebar-toggle row belongs to the sidebar surface. Let
+   the themed sidebar behind it remain continuous instead of painting a second
+   header surface on top. */
+html.cgpt-ui-enhancer-active #sidebar-header {
+  background: transparent !important;
+  background-image: none !important;
+  color: var(--cgpt-sidebar-text, var(--text-primary)) !important;
+  border-color: var(--cgpt-sidebar-border, var(--cgpt-border)) !important;
+}
+
+html.cgpt-ui-enhancer-active main {
+  color: var(--text-primary) !important;
+}
+
+/* Keep the chat-size setting out of the native composer. ChatGPT measures that
+   control while it grows and scrolls, so only conversation messages receive
+   the user-selected chat font size. */
+html.cgpt-ui-enhancer-active main [data-message-author-role="assistant"],
+html.cgpt-ui-enhancer-active main [data-message-author-role="user"] {
+  font-size: var(--cgpt-font-size-chat, 14px);
+}
+
+html.cgpt-ui-enhancer-active:not(.cgpt-ui-enhancer-has-image) main,
+html.cgpt-ui-enhancer-active:not(.cgpt-ui-enhancer-has-image) [class*="bg-token-main-surface-primary"],
+html.cgpt-ui-enhancer-active:not(.cgpt-ui-enhancer-has-image) .bg-surface-primary {
+  background-color: var(--cgpt-chat-bg, var(--main-surface-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image body,
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image .cgpt-ui-enhancer-app-root,
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image main,
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image main > div,
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image [role="presentation"] main,
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image main [class*="thread"],
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image main .bg-surface-primary {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+html.cgpt-ui-enhancer-active main [data-testid^="conversation-turn"] {
+  margin-bottom: var(--cgpt-message-spacing, 12px) !important;
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"] {
+  color: var(--cgpt-assistant-text, var(--text-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"] * {
+  border-color: var(--cgpt-border, var(--border-medium));
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] {
+  color: var(--cgpt-user-text, var(--text-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] .user-message-bubble-color,
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-token-message-surface"],
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-message-surface"] {
+  background-color: var(--cgpt-user-bg, transparent) !important;
+  color: var(--cgpt-user-text, var(--default-theme-user-msg-text)) !important;
+  border-radius: var(--cgpt-msg-radius, 12px) !important;
+}
+
+html.cgpt-ui-enhancer-active #thread-bottom-container,
+html.cgpt-ui-enhancer-active #thread-bottom,
+html.cgpt-ui-enhancer-active #thread-bottom-container > div,
+html.cgpt-ui-enhancer-active #thread-bottom > div,
+html.cgpt-ui-enhancer-active #thread-bottom-container .bg-surface-primary,
+html.cgpt-ui-enhancer-active #thread-bottom-container [class*="bg-token-main-surface-primary"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html.cgpt-ui-enhancer-active #thread-bottom-container::before,
+html.cgpt-ui-enhancer-active #thread-bottom-container::after,
+html.cgpt-ui-enhancer-active #thread-bottom::before,
+html.cgpt-ui-enhancer-active #thread-bottom::after {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+/* The current composer exposes a stable surface marker. Keep editable-input
+   colors separate from the outer composer shell so text editing does not
+   inherit shell borders or shadows. */
+html.cgpt-ui-enhancer-active :is(form[data-type="unified-composer"], form[data-chatgpt-composer]) textarea,
+html.cgpt-ui-enhancer-active :is(form[data-type="unified-composer"], form[data-chatgpt-composer]) [contenteditable="true"],
+html.cgpt-ui-enhancer-active [data-testid="composer-root"] textarea,
+html.cgpt-ui-enhancer-active [data-testid="composer-root"] [contenteditable="true"],
+html.cgpt-ui-enhancer-active #prompt-textarea {
+  background-color: var(--cgpt-composer-input-bg, transparent) !important;
+  color: var(--cgpt-composer-text, var(--text-primary)) !important;
+  caret-color: var(--cgpt-composer-text, var(--text-primary)) !important;
+}
+
+/* v0.8.16: ChatGPT now exposes the visible rounded composer shell directly.
+   Theme that surface instead of globally rewriting ChatGPT border tokens. The
+   native dark-mode composer shadow includes a light inset ring, which becomes
+   conspicuous when the extension forces the composer surface to match the
+   page. Keep the native geometry while using the dedicated composer color and
+   a deliberately low-contrast themed edge. */
+html.cgpt-ui-enhancer-active :is(form[data-type="unified-composer"], form[data-chatgpt-composer]) {
+  --composer-border-radius: var(--cgpt-composer-radius, 28px) !important;
+}
+
+html.cgpt-ui-enhancer-active :is(form[data-type="unified-composer"], form[data-chatgpt-composer]) [data-composer-surface],
+html.cgpt-ui-enhancer-active [data-testid="composer-root"] [data-composer-surface],
+html.cgpt-ui-enhancer-active [data-composer-surface] {
+  background: var(--cgpt-composer-bg, var(--composer-surface-primary, #303030)) !important;
+  background-color: var(--cgpt-composer-bg, var(--composer-surface-primary, #303030)) !important;
+  background-image: none !important;
+  border-color: transparent !important;
+  border-radius: var(--cgpt-composer-radius, 28px) !important;
+  box-shadow:
+    inset 0 0 0 1px var(--cgpt-composer-outline, transparent),
+    0 2px 12px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Code surfaces.
+   Current ChatGPT (September 28 build) exposes fenced blocks with
+   data-markdown-copy="code-block" and may render shell > scrollport > code
+   without a <pre>. Older builds still use <pre>/<code>. Keep the actual code
+   glyph node transparent and paint the native shell instead so generic inline
+   code styling can never create a narrow strip behind fenced code. */
+html.cgpt-ui-enhancer-active code,
+html.cgpt-ui-enhancer-active pre {
+  color: var(--cgpt-code-text, var(--text-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active :is(
+  [data-markdown-copy="code-block"],
+  .cgpt-code-block-shell
+) {
+  background-color: var(--codemirror-bg, var(--cgpt-assistant-bg)) !important;
+  background-image: none !important;
+  border-color: var(--cgpt-code-border, var(--cgpt-border)) !important;
+  border-radius: var(--cgpt-msg-radius, 12px) !important;
+  overflow: clip;
+}
+
+html.cgpt-ui-enhancer-active [data-markdown-copy="code-block"] > [data-markdown-copy="exclude"],
+html.cgpt-ui-enhancer-active .cgpt-code-block-header {
+  background-color: var(--codemirror-bg, var(--cgpt-assistant-bg)) !important;
+  background-image: none !important;
+  border-color: var(--cgpt-code-border, var(--cgpt-border)) !important;
+}
+
+html.cgpt-ui-enhancer-active [data-markdown-copy="code-block"] > :not([data-markdown-copy="exclude"]),
+html.cgpt-ui-enhancer-active .cgpt-code-block-body {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+html.cgpt-ui-enhancer-active [data-markdown-copy="code-block"] :is(pre, code),
+html.cgpt-ui-enhancer-active .cgpt-code-block-shell :is(
+  .cgpt-code-block-pre,
+  .cgpt-code-block-code
+) {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: var(--cgpt-code-text, var(--text-primary)) !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Inline code has its own semantic marker in the current UI. The fallback
+   selectors explicitly exclude fenced code in both current and legacy layouts. */
+html.cgpt-ui-enhancer-active [data-markdown-copy="inline-code"],
+html.cgpt-ui-enhancer-active .markdown code:not(pre code):not([data-markdown-copy="code-block"] code) {
+  background-color: var(--codemirror-bg, var(--cgpt-assistant-bg)) !important;
+  color: var(--cgpt-code-text, var(--text-primary)) !important;
+  border-color: var(--cgpt-code-border, var(--cgpt-border)) !important;
+}
+
+html.cgpt-ui-enhancer-active a {
+  color: var(--cgpt-accent, #10a37f);
+}
+
+html.cgpt-ui-enhancer-active button[data-testid="send-button"],
+html.cgpt-ui-enhancer-active button[aria-label="Send prompt"],
+html.cgpt-ui-enhancer-active #composer-submit-button {
+  background-color: var(--cgpt-accent, #10a37f) !important;
+  color: #fff !important;
+}
+
+html.cgpt-ui-enhancer-active button[data-testid="send-button"] svg,
+html.cgpt-ui-enhancer-active button[aria-label="Send prompt"] svg,
+html.cgpt-ui-enhancer-active button[aria-label="Send dictated message"] svg,
+html.cgpt-ui-enhancer-active #composer-submit-button svg {
+  color: #fff !important;
+  stroke: currentColor !important;
+}
+
+html.cgpt-ui-enhancer-active .composer-submit-btn,
+html.cgpt-ui-enhancer-active .composer-submit-button-color {
+  background-color: var(--cgpt-accent, #10a37f) !important;
+  color: #fff !important;
+}
+
+/* v0.5: broader current-ChatGPT surface coverage and visual theme builder. */
+html.cgpt-ui-enhancer-active [class*="bg-token-sidebar-surface"],
+html.cgpt-ui-enhancer-active [class*="bg-sidebar-surface"],
+html.cgpt-ui-enhancer-active [class*="sidebar-surface"] {
+  background-color: var(--cgpt-sidebar-bg, var(--sidebar-surface-primary)) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Main-surface utility classes are reused by current ChatGPT popovers, file
+   cards, and controls. Scope chat-canvas painting to main instead of changing
+   every matching utility class in the application. */
+html.cgpt-ui-enhancer-active:not(.cgpt-ui-enhancer-has-image) main :is(
+  [class*="bg-token-main-surface-primary"],
+  [class*="bg-main-surface-primary"]
+):not([popover]):not(.popover) {
+  background-color: var(--cgpt-chat-bg, var(--main-surface-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image main :is(
+  [class*="bg-token-main-surface-primary"],
+  [class*="bg-main-surface-primary"]
+):not([popover]):not(.popover) {
+  background-color: transparent !important;
+}
+
+html.cgpt-ui-enhancer-active #thread-bottom-container [class*="from-token"],
+html.cgpt-ui-enhancer-active #thread-bottom [class*="from-token"],
+html.cgpt-ui-enhancer-active #thread-bottom-container [class*="to-token"],
+html.cgpt-ui-enhancer-active #thread-bottom [class*="to-token"] {
+  --tw-gradient-from: transparent !important;
+  --tw-gradient-to: transparent !important;
+  --tw-gradient-stops: transparent, transparent !important;
+  background: transparent !important;
+}
+
+/* Code backgrounds are handled by the dedicated semantic/guarded rules above.
+   Do not repaint every descendant code element here: current fenced blocks no
+   longer necessarily contain <pre>, so a generic code background would paint
+   the code glyph row instead of the visible native shell. */
+
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"] a,
+html.cgpt-ui-enhancer-active main a {
+  color: var(--cgpt-accent, #10a37f) !important;
+}
+
+.cgpt-theme-builder-toolbar,
+.cgpt-theme-builder-panel,
+.cgpt-theme-builder-highlight {
+  all: initial;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  box-sizing: border-box;
+}
+
+.cgpt-theme-builder-toolbar *,
+.cgpt-theme-builder-panel * { box-sizing: border-box; }
+
+.cgpt-theme-builder-toolbar {
+  position: fixed;
+  top: 14px;
+  left: calc(var(--cgpt-sidebar-width, 0px) + 16px);
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - var(--cgpt-sidebar-width, 0px) - 32px);
+  padding: 9px 10px;
+  border: 1px solid rgba(192,132,252,0.55);
+  border-radius: 14px;
+  background: rgba(20, 13, 31, 0.96);
+  color: #f8f1ff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+}
+
+.cgpt-theme-builder-toolbar strong { font: 700 13px/1.2 system-ui; white-space: nowrap; }
+.cgpt-theme-builder-toolbar .cgpt-builder-status { font: 12px/1.2 system-ui; color: #ccb7e8; max-width: 340px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cgpt-theme-builder-toolbar button,
+.cgpt-theme-builder-panel button {
+  font: 600 12px/1 system-ui;
+  border: 1px solid rgba(255,255,255,0.16);
+  color: #f8f1ff;
+  background: #2b203a;
+  border-radius: 10px;
+  padding: 8px 9px;
+  cursor: pointer;
+}
+.cgpt-theme-builder-toolbar button:hover,
+.cgpt-theme-builder-panel button:hover { background: #3b2a50; }
+.cgpt-theme-builder-toolbar button.primary { border-color: #c084fc; background: #4a276c; }
+.cgpt-theme-builder-toolbar button.success,
+.cgpt-theme-builder-panel button.success { border-color: #10b981; background: #0f5f4a; }
+.cgpt-theme-builder-toolbar button.danger { border-color: #7f1d1d; background: #4a1515; }
+
+.cgpt-theme-builder-highlight {
+  position: fixed;
+  z-index: 2147483645;
+  pointer-events: none;
+  border: 2px solid #c084fc;
+  border-radius: 10px;
+  background: rgba(192, 132, 252, 0.12);
+  box-shadow: 0 0 0 9999px rgba(0,0,0,0.05), 0 0 24px rgba(192,132,252,0.35);
+  opacity: 0;
+  transition: opacity 90ms ease;
+}
+.cgpt-theme-builder-highlight.visible { opacity: 1; }
+html.cgpt-theme-builder-selecting { cursor: crosshair !important; }
+html.cgpt-theme-builder-selecting * { cursor: crosshair !important; }
+
+.cgpt-theme-builder-panel {
+  position: fixed;
+  right: 18px;
+  top: 72px;
+  z-index: 2147483646;
+  width: min(380px, calc(100vw - 36px));
+  max-height: calc(100vh - 92px);
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid rgba(192,132,252,0.45);
+  border-radius: 18px;
+  background: rgba(18, 15, 28, 0.97);
+  color: #f4edff;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.45);
+  backdrop-filter: blur(12px);
+}
+.cgpt-builder-panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.cgpt-builder-panel-header strong { display: block; font: 750 16px/1.2 system-ui; }
+.cgpt-builder-panel-header small { display: block; margin-top: 3px; font: 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; color: #baa5d6; }
+.cgpt-builder-panel-header button.icon { width: 30px; height: 30px; padding: 0; border-radius: 999px; font-size: 18px; }
+.cgpt-builder-desc { margin: 0 0 12px; color: #cfc0e7; font: 12px/1.45 system-ui; }
+.cgpt-builder-field { display: grid; grid-template-columns: 128px 1fr; align-items: center; gap: 10px; margin: 9px 0; color: #e8dcfb; font: 12px/1.25 system-ui; }
+.cgpt-builder-field input[type="color"] { width: 100%; height: 34px; border: 1px solid #514365; border-radius: 9px; padding: 2px; background: #171120; }
+.cgpt-builder-field input[type="file"] { width: 100%; color: #d9cdf0; font: 12px/1.2 system-ui; }
+.cgpt-builder-field select { width: 100%; border: 1px solid #514365; border-radius: 9px; background: #21182e; color: #f7f0ff; padding: 8px; }
+.cgpt-builder-range { display: grid; grid-template-columns: 1fr 48px; gap: 8px; align-items: center; }
+.cgpt-builder-range input { width: 100%; }
+.cgpt-builder-range output { color: #d8c8ef; font: 12px/1 ui-monospace, monospace; text-align: right; }
+.cgpt-builder-section-title { margin: 14px 0 8px; padding-top: 10px; border-top: 1px solid #332742; color: #f5edff; font: 700 12px/1 system-ui; text-transform: uppercase; letter-spacing: 0.04em; }
+.cgpt-builder-actions { display: flex; gap: 8px; margin-top: 14px; }
+.cgpt-builder-actions button { flex: 1; }
+
+/* v0.5.1: granular element colors and safer selectors. */
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar,
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i] {
+  color: var(--cgpt-sidebar-text, var(--text-primary)) !important;
+  border-color: var(--cgpt-sidebar-border, var(--cgpt-border)) !important;
+}
+
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar a,
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar button,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar a,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar a,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar button,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar button,
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i] a,
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i] button,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar [role="button"],
+html.cgpt-ui-enhancer-active #stage-popover-sidebar [role="button"] {
+  background-color: var(--cgpt-sidebar-item-bg, transparent) !important;
+  color: var(--cgpt-sidebar-item-text, var(--cgpt-sidebar-text)) !important;
+  border-color: var(--cgpt-sidebar-item-border, transparent) !important;
+  border-radius: var(--cgpt-sidebar-item-radius, 12px) !important;
+}
+
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar svg,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar svg,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar svg,
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i] svg {
+  color: var(--cgpt-sidebar-icon, var(--cgpt-sidebar-item-text)) !important;
+  stroke: currentColor !important;
+}
+
+html.cgpt-ui-enhancer-active #page-header,
+html.cgpt-ui-enhancer-active main header,
+html.cgpt-ui-enhancer-active main [data-testid="sticky-header"] {
+  color: var(--cgpt-header-text, var(--text-primary)) !important;
+  border-color: var(--cgpt-header-border, var(--cgpt-border)) !important;
+}
+
+html.cgpt-ui-enhancer-active #thread-bottom-container,
+html.cgpt-ui-enhancer-active #thread-bottom {
+  background-color: var(--cgpt-bottom-dock-bg, transparent) !important;
+  border-color: var(--cgpt-bottom-dock-border, transparent) !important;
+}
+
+html.cgpt-ui-enhancer-active :is(form[data-type="unified-composer"], form[data-chatgpt-composer]) textarea,
+html.cgpt-ui-enhancer-active :is(form[data-type="unified-composer"], form[data-chatgpt-composer]) [contenteditable="true"],
+html.cgpt-ui-enhancer-active #thread-bottom-container form textarea,
+html.cgpt-ui-enhancer-active #thread-bottom-container form [contenteditable="true"],
+html.cgpt-ui-enhancer-active #thread-bottom form textarea,
+html.cgpt-ui-enhancer-active #thread-bottom form [contenteditable="true"],
+html.cgpt-ui-enhancer-active [data-testid="composer-root"] textarea,
+html.cgpt-ui-enhancer-active [data-testid="composer-root"] [contenteditable="true"],
+html.cgpt-ui-enhancer-active #prompt-textarea {
+  background-color: var(--cgpt-composer-input-bg, transparent) !important;
+  color: var(--cgpt-composer-text, var(--text-primary)) !important;
+  caret-color: var(--cgpt-composer-text, var(--text-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active button[data-testid="send-button"],
+html.cgpt-ui-enhancer-active button[aria-label="Send prompt"],
+html.cgpt-ui-enhancer-active button[aria-label="Send dictated message"],
+html.cgpt-ui-enhancer-active #composer-submit-button,
+html.cgpt-ui-enhancer-active .composer-submit-btn,
+html.cgpt-ui-enhancer-active .composer-submit-button-color {
+  background-color: var(--cgpt-send-bg, var(--cgpt-accent)) !important;
+  color: var(--cgpt-send-text, #fff) !important;
+  border-radius: var(--cgpt-send-radius, 999px) !important;
+}
+
+html.cgpt-ui-enhancer-active button[data-testid="send-button"] svg,
+html.cgpt-ui-enhancer-active button[aria-label="Send prompt"] svg,
+html.cgpt-ui-enhancer-active button[aria-label="Send dictated message"] svg,
+html.cgpt-ui-enhancer-active #composer-submit-button svg {
+  color: var(--cgpt-send-text, #fff) !important;
+  stroke: currentColor !important;
+}
+
+html.cgpt-ui-enhancer-active :is(form[data-type="unified-composer"], form[data-chatgpt-composer], [data-testid="composer-root"])
+  :is(button.composer-btn, button.__composer-pill, [data-testid="composer-plus-btn"]):not([data-testid="send-button"]):not(#composer-submit-button) {
+  color: var(--cgpt-secondary-button-text, var(--text-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active :is(form[data-type="unified-composer"], form[data-chatgpt-composer], [data-testid="composer-root"])
+  :is(button.composer-btn, button.__composer-pill, [data-testid="composer-plus-btn"]):not([data-testid="send-button"]):not(#composer-submit-button) svg {
+  color: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"] {
+  border-color: var(--cgpt-assistant-border, transparent) !important;
+}
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] .user-message-bubble-color,
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-token-message-surface"],
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-message-surface"] {
+  border-color: var(--cgpt-user-border, transparent) !important;
+}
+html.cgpt-ui-enhancer-active .markdown pre,
+html.cgpt-ui-enhancer-active .markdown code,
+html.cgpt-ui-enhancer-active pre,
+html.cgpt-ui-enhancer-active code {
+  color: var(--cgpt-code-text, var(--text-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active main a,
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"] a {
+  color: var(--cgpt-accent, #10a37f) !important;
+}
+
+/* v0.5.1 builder controls */
+.cgpt-theme-builder-panel button.warning {
+  border-color: #f59e0b;
+  background: #5d3b0d;
+}
+.cgpt-builder-color-wrap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.cgpt-builder-color-wrap button.mini {
+  padding: 7px 8px;
+  font-size: 11px;
+}
+.cgpt-builder-file-picker {
+  display: grid;
+  gap: 8px;
+}
+.cgpt-builder-file-picker input[type="file"] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.cgpt-builder-file-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid rgba(192,132,252,0.6);
+  background: #2f2342;
+  color: #f8f1ff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font: 700 12px/1 system-ui;
+  cursor: pointer;
+}
+.cgpt-builder-file-button:hover { background: #3b2a50; }
+.cgpt-builder-file-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  color: #d8c8ef;
+  font: 12px/1.3 system-ui;
+  overflow-wrap: anywhere;
+}
+.cgpt-theme-builder-panel button.file-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 999px;
+  border-color: #ef4444;
+  color: #fff;
+  background: #7f1d1d;
+  font-size: 16px;
+  line-height: 1;
+}
+.cgpt-builder-actions {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* v0.5.2: polish pass for grouped sidebar rows and builder save dialogs. */
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar :is(a, button, [role="button"], [tabindex="0"]),
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar :is(a, button, [role="button"], [tabindex="0"]),
+html.cgpt-ui-enhancer-active #stage-popover-sidebar :is(a, button, [role="button"], [tabindex="0"]),
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i] :is(a, button, [role="button"], [tabindex="0"]) {
+  background-color: var(--cgpt-sidebar-item-bg, transparent) !important;
+  color: var(--cgpt-sidebar-item-text, var(--cgpt-sidebar-text)) !important;
+  border-color: var(--cgpt-sidebar-item-border, transparent) !important;
+  border-radius: var(--cgpt-sidebar-item-radius, 12px) !important;
+}
+
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar :is(a, button, [role="button"], [tabindex="0"]) *,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar :is(a, button, [role="button"], [tabindex="0"]) *,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar :is(a, button, [role="button"], [tabindex="0"]) *,
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i] :is(a, button, [role="button"], [tabindex="0"]) * {
+  color: inherit !important;
+  border-color: inherit !important;
+}
+
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar :is(a, button, [role="button"], [tabindex="0"]) svg,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar :is(a, button, [role="button"], [tabindex="0"]) svg,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar :is(a, button, [role="button"], [tabindex="0"]) svg,
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i] :is(a, button, [role="button"], [tabindex="0"]) svg {
+  color: var(--cgpt-sidebar-item-text, var(--cgpt-sidebar-text)) !important;
+  stroke: currentColor !important;
+}
+
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar > :first-child svg,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar > :first-child svg,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar > :first-child svg {
+  color: var(--cgpt-sidebar-icon, var(--cgpt-sidebar-text)) !important;
+  stroke: currentColor !important;
+}
+
+.cgpt-theme-builder-multi-highlight {
+  all: initial;
+  position: fixed;
+  z-index: 2147483645;
+  pointer-events: none;
+  border: 2px solid #c084fc;
+  border-radius: 10px;
+  background: rgba(192, 132, 252, 0.13);
+  box-shadow: 0 0 18px rgba(192,132,252,0.28);
+  opacity: 0;
+  transition: opacity 90ms ease;
+  box-sizing: border-box;
+}
+.cgpt-theme-builder-multi-highlight.visible { opacity: 1; }
+
+.cgpt-builder-text-input {
+  width: 100%;
+  border: 1px solid #514365;
+  border-radius: 9px;
+  background: #21182e;
+  color: #f7f0ff;
+  padding: 9px 10px;
+  font: 13px/1.2 system-ui;
+  outline: none;
+}
+.cgpt-builder-text-input:focus {
+  border-color: #c084fc;
+  box-shadow: 0 0 0 2px rgba(192,132,252,0.20);
+}
+
+.cgpt-theme-builder-modal {
+  all: initial;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.38);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  box-sizing: border-box;
+}
+.cgpt-theme-builder-modal *,
+.cgpt-theme-builder-modal *::before,
+.cgpt-theme-builder-modal *::after { box-sizing: border-box; }
+.cgpt-builder-modal-card {
+  width: min(480px, calc(100vw - 32px));
+  border: 1px solid rgba(192,132,252,0.48);
+  border-radius: 18px;
+  background: rgba(18, 15, 28, 0.98);
+  color: #f4edff;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.50);
+  padding: 14px;
+}
+.cgpt-builder-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.cgpt-builder-modal-header strong { font: 750 16px/1.2 system-ui; }
+.cgpt-builder-modal-header button.icon {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.16);
+  color: #f8f1ff;
+  background: #2b203a;
+  font: 700 18px/1 system-ui;
+  cursor: pointer;
+}
+.cgpt-builder-modal-body p {
+  margin: 0 0 12px;
+  color: #cfc0e7;
+  font: 13px/1.45 system-ui;
+}
+.cgpt-builder-modal-body .cgpt-builder-field {
+  grid-template-columns: 110px 1fr;
+}
+.cgpt-builder-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+.cgpt-builder-modal-actions button,
+.cgpt-theme-builder-modal button.success,
+.cgpt-theme-builder-modal button {
+  font: 700 12px/1 system-ui;
+  border: 1px solid rgba(255,255,255,0.16);
+  color: #f8f1ff;
+  background: #2b203a;
+  border-radius: 10px;
+  padding: 9px 11px;
+  cursor: pointer;
+}
+.cgpt-theme-builder-modal button.success {
+  border-color: #10b981;
+  background: #0f5f4a;
+}
+.cgpt-theme-builder-modal select {
+  width: 100%;
+  border: 1px solid #514365;
+  border-radius: 9px;
+  background: #21182e;
+  color: #f7f0ff;
+  padding: 9px 10px;
+  font: 13px/1.2 system-ui;
+}
+
+.cgpt-builder-file-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  width: 100%;
+}
+.cgpt-builder-file-name {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* v0.7 compatibility note retained: shared secondary surfaces are intentionally left native. */
+
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"],
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"] :where(p, li, span, div:not(:has(img)):not(:has(svg))) {
+  color: var(--cgpt-assistant-text, var(--text-primary)) !important;
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] .user-message-bubble-color,
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-token-message-surface"],
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-message-surface"] {
+  border-color: transparent !important;
+}
+
+/* v0.8.14: current ChatGPT surface compatibility.
+   Sidebar styling is limited to the known desktop rail, collapsed rail, mobile
+   popover, and Chat history navigation. User-bubble transparency is limited to
+   the bubble surface itself so file cards and other rich attachments keep their
+   native surfaces. */
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar,
+html.cgpt-ui-enhancer-active #stage-sidebar-tiny-bar,
+html.cgpt-ui-enhancer-active #stage-popover-sidebar,
+html.cgpt-ui-enhancer-active nav[aria-label*="Chat history" i],
+html.cgpt-ui-enhancer-active [class*="bg-token-sidebar-surface"],
+html.cgpt-ui-enhancer-active [class*="bg-sidebar-surface"],
+html.cgpt-ui-enhancer-active [class*="sidebar-surface"] {
+  background-color: var(--cgpt-sidebar-bg, var(--sidebar-surface-primary)) !important;
+  background-image: none !important;
+}
+
+html.cgpt-ui-enhancer-active {
+  --cgpt-user-bg: transparent !important;
+  --cgpt-user-border: transparent !important;
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] {
+  color: var(--cgpt-user-text, var(--text-primary, #ececec)) !important;
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] > .user-message-bubble-color,
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] .user-message-bubble-color,
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-token-message-surface"],
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-message-surface"] {
+  background: var(--cgpt-user-bg, transparent) !important;
+  background-color: var(--cgpt-user-bg, transparent) !important;
+  background-image: none !important;
+  color: var(--cgpt-user-text, var(--text-primary, #ececec)) !important;
+  border-color: var(--cgpt-user-border, transparent) !important;
+  border-radius: var(--cgpt-msg-radius, 12px) !important;
+}
+
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image .cgpt-ui-enhancer-app-root,
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image .cgpt-ui-enhancer-app-root > div:first-child,
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image .cgpt-ui-enhancer-app-root [class*="bg-token-main-surface-primary"],
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image .cgpt-ui-enhancer-app-root [class*="bg-main-surface-primary"],
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image .cgpt-ui-enhancer-app-root [class*="bg-(--main-surface-primary"],
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-has-image .cgpt-ui-enhancer-app-root [class*="bg-[var(--main-surface-primary"] {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* v0.8.11: production fixes for solid sidebar and selection stability.
+   Root causes fixed here:
+   1) The no-image state previously still injected an empty fixed background layer.
+      That let transparent native surfaces reveal the chat color under the sidebar.
+   2) User bubble transparency was leaking through broad native variables/selectors
+      into non-message UI, including current sidebar row surfaces.
+   3) A document-wide class/style MutationObserver recalculated sidebar width during
+      assistant text selection. The JS now uses a real sidebar ResizeObserver, while
+      these CSS guards prevent temporary horizontal selection overflow. */
+
+html.cgpt-ui-enhancer-active:not(.cgpt-ui-enhancer-has-image) #cgpt-ui-enhancer-bg-layer {
+  display: none !important;
+}
+
+html.cgpt-ui-enhancer-active,
+html.cgpt-ui-enhancer-active body {
+  overflow-x: clip !important;
+}
+
+html.cgpt-ui-enhancer-active body {
+  overscroll-behavior-x: none;
+}
+
+html.cgpt-ui-enhancer-active main,
+html.cgpt-ui-enhancer-active [data-testid^="conversation-turn"],
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"],
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] {
+  min-width: 0;
+}
+
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"],
+html.cgpt-ui-enhancer-active [data-message-author-role="assistant"] .markdown {
+  overflow-wrap: anywhere;
+}
+
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-text-selecting #cgpt-ui-enhancer-bg-layer,
+html.cgpt-ui-enhancer-active.cgpt-ui-enhancer-text-selecting #cgpt-ui-enhancer-bg-layer * {
+  transition: none !important;
+  animation: none !important;
+}
+
+html.cgpt-ui-enhancer-active {
+  /* Current ChatGPT expanded-sidebar body uses --sidebar-bg and falls back to
+     --bg-elevated-secondary when it is absent. Keep that native token aligned
+     with GPT Themes so the scrollable sidebar cannot inherit the menu surface. */
+  --sidebar-bg: var(--cgpt-sidebar-bg, #171717) !important;
+  --sidebar-surface: var(--cgpt-sidebar-bg, var(--sidebar-surface-primary)) !important;
+  --sidebar-surface-primary: var(--cgpt-sidebar-bg, #171717) !important;
+  --sidebar-surface-secondary: var(--cgpt-sidebar-bg, #171717) !important;
+  --sidebar-surface-tertiary: var(--cgpt-sidebar-bg, #171717) !important;
+  --color-token-sidebar-surface: var(--cgpt-sidebar-bg, #171717) !important;
+}
+
+html.cgpt-ui-enhancer-active :is(#stage-slideover-sidebar, #stage-sidebar-tiny-bar, #stage-popover-sidebar, nav[aria-label*="Chat history" i]) {
+  /* Reinforce the current native token locally in case ChatGPT scopes its own
+     sidebar variables below <html>. Descendants inherit this value. */
+  --sidebar-bg: var(--cgpt-sidebar-bg, #171717) !important;
+  background: var(--cgpt-sidebar-bg, var(--sidebar-bg, var(--sidebar-surface-primary, #171717))) !important;
+  background-color: var(--cgpt-sidebar-bg, var(--sidebar-bg, var(--sidebar-surface-primary, #171717))) !important;
+  background-image: none !important;
+  color: var(--cgpt-sidebar-text, var(--text-primary, #ececec)) !important;
+}
+
+/* Current builds can put the sidebar body on a utility that references
+   --sidebar-bg directly rather than a sidebar-surface token. Keep this scoped
+   to the known navigation roots so elevated menus elsewhere remain opaque. */
+html.cgpt-ui-enhancer-active :is(#stage-slideover-sidebar, #stage-sidebar-tiny-bar, #stage-popover-sidebar, nav[aria-label*="Chat history" i])
+  :is([class*="sidebar-bg"], [style*="--sidebar-bg"]) {
+  --sidebar-bg: var(--cgpt-sidebar-bg, #171717) !important;
+}
+
+html.cgpt-ui-enhancer-active :is(#stage-slideover-sidebar, #stage-sidebar-tiny-bar, #stage-popover-sidebar, nav[aria-label*="Chat history" i])
+  :is([class*="bg-token-sidebar-surface"], [class*="bg-sidebar-surface"], [class*="sidebar-surface"], [class*="bg-token-main-surface"], [class*="bg-main-surface"], [class*="bg-surface-primary"], [class*="bg-token-message-surface"], [class*="bg-message-surface"]) {
+  background-color: var(--cgpt-sidebar-bg, var(--sidebar-surface-primary, #171717)) !important;
+  background-image: none !important;
+}
+
+html.cgpt-ui-enhancer-active :is(#stage-slideover-sidebar, #stage-sidebar-tiny-bar, #stage-popover-sidebar, nav[aria-label*="Chat history" i])
+  :is(a, button, [role="button"], [tabindex="0"]) {
+  background-color: var(--cgpt-sidebar-item-bg, transparent) !important;
+  color: var(--cgpt-sidebar-item-text, var(--cgpt-sidebar-text, #ececec)) !important;
+  border-color: var(--cgpt-sidebar-item-border, transparent) !important;
+  border-radius: var(--cgpt-sidebar-item-radius, 12px) !important;
+}
+
+/* Keep user bubble transparency scoped to actual bubble surfaces. */
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] > .user-message-bubble-color,
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] .user-message-bubble-color,
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-token-message-surface"],
+html.cgpt-ui-enhancer-active [data-message-author-role="user"] [class*="bg-message-surface"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border-color: transparent !important;
+}
+
+
+/* v0.8.14: current Chat / Work segmented control. */
+html.cgpt-ui-enhancer-active main [role="tablist"]:has(> [role="tab"]) {
+  color: var(--text-secondary) !important;
+  border-color: var(--cgpt-border, var(--border-medium)) !important;
+}
+
+html.cgpt-ui-enhancer-active main [role="tablist"]:has(> [role="tab"]) > [role="tab"] {
+  color: var(--cgpt-secondary-button-text, var(--text-secondary)) !important;
+  border-color: var(--cgpt-secondary-button-border, transparent) !important;
+}
+
+html.cgpt-ui-enhancer-active main [role="tablist"]:has(> [role="tab"]) > [role="tab"][aria-selected="true"] {
+  background-color: var(--cgpt-secondary-button-bg, var(--main-surface-secondary)) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--cgpt-secondary-button-radius, 999px) !important;
+}
+
+/* v0.8.21: distinguish the current sidebar wordmark header from the main
+   conversation header. #sidebar-header stays on the sidebar surface while
+   #page-header/main header receive the configurable top-header theme. */
+
+/* v0.8.23: menu-surface-guard must never repaint the structural sidebar
+   scrollport. The live paint trace showed a viewport-tall sidebar <nav> carrying
+   our cgpt-ui-menu-surface marker. JavaScript now removes that false positive;
+   this custom-property failsafe also makes any stale marked structural nav
+   resolve the guard's inline background back to the configured sidebar color. */
+html.cgpt-ui-enhancer-active #stage-slideover-sidebar
+  nav.cgpt-ui-menu-surface:not([role="menu"]):not([role="listbox"]):not([popover]),
+html.cgpt-ui-enhancer-active #stage-popover-sidebar
+  nav.cgpt-ui-menu-surface:not([role="menu"]):not([role="listbox"]):not([popover]) {
+  --cgpt-overlay-bg: var(--cgpt-sidebar-bg, var(--sidebar-surface-primary, #171717)) !important;
+}
+
+/* v0.8.20: opaque live menu surfaces plus neutral menu-row state fills.
+   menu-surface-guard.js identifies the live painted container for the + and
+   slash-command menus. The surface itself stays fully opaque. ChatGPT's current
+   touch menu sets --menu-item-highlighted: var(--bg-tertiary), which becomes a
+   conspicuous pill/box when GPT Themes remaps --bg-tertiary to the chat canvas.
+   Neutralize only the row-state fill variables inside these menus; do not
+   rewrite the global ChatGPT surface tokens or the menu's icon styling. */
+html.cgpt-ui-enhancer-active :is(
+  .MA-gxq_content[data-content-appearance="touch-optimized"],
+  [data-content-appearance="touch-optimized"],
+  .cgpt-ui-menu-surface
+) {
+  background-color: var(--cgpt-overlay-bg, var(--cgpt-assistant-bg, #303030)) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+}
+
+html.cgpt-ui-enhancer-active :is(
+  .MA-gxq_content[data-content-appearance="touch-optimized"],
+  [data-content-appearance="touch-optimized"],
+  .cgpt-ui-menu-surface
+) :is(
+  .__menu-item,
+  [data-oai-menu-item],
+  [role="menuitem"],
+  [role="menuitemradio"],
+  [role="menuitemcheckbox"],
+  [role="option"]
+) {
+  --menu-item-background: transparent !important;
+  --menu-item-highlighted: transparent !important;
+  --menu-item-active: transparent !important;
+  --menu-item-open: transparent !important;
+  --menu-item-pressed: transparent !important;
+}
+
+/* Some ChatGPT menu primitives resolve the state variable into a concrete
+   background-color rule with high specificity. Keep the item itself clear in
+   every transient interaction state so the opaque panel remains the only large
+   painted surface. Text/icons still provide hover/focus feedback natively. */
+html.cgpt-ui-enhancer-active :is(
+  .MA-gxq_content[data-content-appearance="touch-optimized"],
+  [data-content-appearance="touch-optimized"],
+  .cgpt-ui-menu-surface
+) :is(
+  .__menu-item,
+  [data-oai-menu-item],
+  [role="menuitem"],
+  [role="menuitemradio"],
+  [role="menuitemcheckbox"],
+  [role="option"]
+):is(
+  :hover,
+  :focus,
+  :focus-visible,
+  [data-highlighted],
+  [data-active],
+  [data-state="active"],
+  [data-state="open"]
+) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+/* ChatGPT's disclaimer uses a main-surface pill plus a wide main-surface
+   shadow to blend into the stock footer. GPT Themes intentionally makes the
+   footer transparent, so that native blend becomes a dark halo. Remove only
+   that cosmetic pill/shadow while leaving the disclaimer text and layout
+   untouched. */
+html.cgpt-ui-enhancer-active [data-testid="thread-disclaimer"] [class*="bg-token-main-surface-primary"],
+html.cgpt-ui-enhancer-active [data-testid="thread-disclaimer"] [class*="bg-main-surface-primary"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+}
+
+html.cgpt-ui-enhancer-active [data-testid="thread-disclaimer"] [class*="shadow-"] {
+  box-shadow: none !important;
+}
+
+/* v0.8.30: October thread footer has a dedicated decorative paint layer.
+   Clear only that direct, aria-hidden layer; keep cards, menus and buttons
+   inside the footer opaque. Paint the configured dock once, on its root. */
+html.cgpt-ui-enhancer-active:root main [data-thread-scroll-footer="true"] {
+  background: var(--cgpt-bottom-dock-bg, transparent) !important;
+  border-color: var(--cgpt-bottom-dock-border, transparent) !important;
+}
+
+html.cgpt-ui-enhancer-active [data-thread-scroll-footer="true"] > [aria-hidden="true"],
+html.cgpt-ui-enhancer-active [data-thread-scroll-footer="true"]::before,
+html.cgpt-ui-enhancer-active [data-thread-scroll-footer="true"]::after {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* The new shell replaces data-composer-surface. Match its semantic attributes
+   rather than the generated CSS-module class or every layout descendant. */
+html.cgpt-ui-enhancer-active form[data-chatgpt-composer]
+  [data-composer-surface-variant][data-composer-radius-variant] {
+  background: var(--cgpt-composer-bg, #303030) !important;
+  border-color: var(--cgpt-composer-border, transparent) !important;
+  border-radius: var(--cgpt-composer-radius, 28px) !important;
+  box-shadow: inset 0 0 0 1px var(--cgpt-composer-outline, transparent),
+    0 2px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+html.cgpt-ui-enhancer-active form[data-chatgpt-composer]
+  :is(button[aria-label="Send"], button[aria-label="Send message"]) {
+  background-color: var(--cgpt-send-bg, var(--cgpt-accent)) !important;
+  color: var(--cgpt-send-text, #fff) !important;
+  border-radius: var(--cgpt-send-radius, 999px) !important;
+}
+html.cgpt-ui-enhancer-active form[data-chatgpt-composer]
+  :is(button[aria-label="Send"], button[aria-label="Send message"]) svg {
+  color: inherit !important;
+}
+
+/* v0.8.31: the native viewer owns its toolbar. The fixed, pointer-transparent
+   app titlebar must not paint over those file actions. */
+html.cgpt-ui-enhancer-active main:has([data-testid="viewer-header"])
+  header[data-app-shell-titlebar="true"] {
+  background: transparent !important;
+}
+
+html.cgpt-ui-enhancer-active .gptt-brand-original-hidden {
+  display: none !important;
+}
+html.cgpt-ui-enhancer-active .gptt-brand-custom {
+  display: block !important;
+  width: var(--gptt-brand-width, 88px) !important;
+  height: var(--gptt-brand-height, 22px) !important;
+  max-width: 120px !important;
+  max-height: 28px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  flex: 0 0 auto;
+  pointer-events: none;
+}

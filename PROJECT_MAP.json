@@ -1,0 +1,231 @@
+{
+  "format_version": 2,
+  "project": {
+    "name": "gpt themes",
+    "description": ""
+  },
+  "entries": {
+    ".aiignore": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    ".aimemory": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "assets": {
+      "kind": "directory",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "background": {
+      "kind": "directory",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content": {
+      "kind": "directory",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "manifest.json": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "options": {
+      "kind": "directory",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "popup": {
+      "kind": "directory",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "shared": {
+      "kind": "directory",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "tests": {
+      "kind": "directory",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "assets/icons": {
+      "kind": "directory",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "background/navigation-tabs.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/code-block-guard.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/compatibility-probe.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/composer-caret-guard.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/content.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/injected.css": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/menu-surface-guard.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/navigation-tab-guard.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/polished-editor.css": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/target-registry.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/theme-builder.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "content/theme-engine.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "options/options.css": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "options/options.html": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "options/options.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "popup/popup.css": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "popup/popup.html": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "popup/popup.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "shared/constants.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "shared/presets.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "shared/storage.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "tests/code-block-guard.test.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "tests/navigation-tab-guard.test.js": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "assets/icons/icon128.png": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "assets/icons/icon16.png": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    },
+    "assets/icons/icon48.png": {
+      "kind": "file",
+      "description": "",
+      "important_symbols": [],
+      "relationships": []
+    }
+  }
+}

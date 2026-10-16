@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ChatGPT UI Enhancer — Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="page">
+      <h1>ChatGPT UI Enhancer</h1>
+      <p class="sub">Local-only themes, popup quick themes, and background images. No network calls.</p>
+
+      <section>
+        <h2>General</h2>
+        <label class="toggle">
+          <input type="checkbox" id="enabled" />
+          <span>Enable extension on chatgpt.com</span>
+        </label>
+        <div class="field">
+          <label for="preset-select">Apply an existing theme</label>
+          <select id="preset-select"></select>
+        </div>
+      </section>
+
+      <section>
+        <h2>ChatGPT logo</h2>
+        <p class="sub compact">Change only the logo beside Search. Search, sidebar controls, and the mode menu stay usable. Applies across themes.</p>
+        <div class="field">
+          <label for="logo-mode">Logo appearance</label>
+          <select id="logo-mode">
+            <option value="original">Show original logo</option>
+            <option value="hidden">Hide original logo</option>
+            <option value="custom">Replace ChatGPT logo with custom image</option>
+          </select>
+        </div>
+        <div id="logo-custom" hidden>
+          <div class="field">
+            <label for="logo-file">Custom logo image</label>
+            <input type="file" id="logo-file" accept="image/*" />
+          </div>
+          <p class="sub compact">Automatically fits the original logo area without stretching or cropping. Saved on this device.</p>
+          <img id="logo-preview" alt="Custom logo preview" hidden />
+          <button type="button" class="secondary" id="logo-remove">Remove custom image</button>
+        </div>
+        <div class="actions"><button type="button" class="primary" id="save-logo">Save logo settings</button></div>
+        <p id="logo-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section>
+        <h2>Theme colors</h2>
+        <p class="sub compact">Edit the colors below, then save either as the active custom theme or as a named quick theme.</p>
+        <div class="grid" id="color-grid"></div>
+        <div class="row-inline top-gap">
+          <div class="field">
+            <label for="fontSizePx">Font size</label>
+            <input type="range" id="fontSizePx" min="12" max="20" step="1" />
+            <span id="fontSizePx-val"></span>
+          </div>
+          <div class="field">
+            <label for="messageSpacingPx">Message spacing</label>
+            <input type="range" id="messageSpacingPx" min="4" max="28" step="1" />
+            <span id="messageSpacingPx-val"></span>
+          </div>
+          <div class="field">
+            <label for="borderRadiusPx">Message radius</label>
+            <input type="range" id="borderRadiusPx" min="0" max="28" step="1" />
+            <span id="borderRadiusPx-val"></span>
+          </div>
+          <div class="field">
+            <label for="composerRadiusPx">Composer radius</label>
+            <input type="range" id="composerRadiusPx" min="8" max="32" step="1" />
+            <span id="composerRadiusPx-val"></span>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="primary" id="save-custom">Save as active custom theme</button>
+          <button type="button" class="secondary" id="reset-custom-colors">Reset form to Default+</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Background image</h2>
+        <p class="sub compact">The selected image is saved with the current theme/background settings. It stays in extension storage on this device.</p>
+        <div class="actions tight">
+          <input type="file" id="bg-file" accept="image/*" />
+          <button type="button" class="secondary" id="bg-remove">Remove image</button>
+        </div>
+        <div class="row-inline top-gap">
+          <div class="field">
+            <label for="bg-opacity">Image opacity</label>
+            <input type="range" id="bg-opacity" min="0" max="1" step="0.05" />
+            <span id="bg-opacity-val"></span>
+          </div>
+          <div class="field">
+            <label for="bg-blur">Blur</label>
+            <input type="range" id="bg-blur" min="0" max="24" step="1" />
+            <span id="bg-blur-val"></span>
+          </div>
+          <div class="field">
+            <label for="bg-overlay-color">Overlay color</label>
+            <input type="color" id="bg-overlay-color" />
+          </div>
+          <div class="field">
+            <label for="bg-overlay-strength">Overlay strength</label>
+            <input type="range" id="bg-overlay-strength" min="0" max="1" step="0.05" />
+            <span id="bg-overlay-strength-val"></span>
+          </div>
+        </div>
+        <div class="row-inline top-gap">
+          <div class="field">
+            <label for="bg-fit">Fit mode</label>
+            <select id="bg-fit">
+              <option value="cover">cover</option>
+              <option value="contain">contain</option>
+              <option value="tile">tile</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bg-position">Position</label>
+            <select id="bg-position">
+              <option value="center">center</option>
+              <option value="top">top</option>
+              <option value="bottom">bottom</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bg-scope">Apply background to</label>
+            <select id="bg-scope">
+              <option value="chat">Main chat area only</option>
+              <option value="full">Full page</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="primary" id="save-bg">Save background settings</button>
+        </div>
+        <div class="warn" id="bg-warn" hidden></div>
+      </section>
+
+      <section>
+        <h2>Named quick theme</h2>
+        <p class="sub compact">This captures the current color form and background form together.</p>
+        <div class="row-inline">
+          <div class="field name-field">
+            <label for="theme-name">Theme name</label>
+            <input type="text" id="theme-name" placeholder="Example: Green forest with wallpaper" maxlength="60" />
+          </div>
+          <button type="button" class="primary align-end" id="save-named-theme">Save named quick theme</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Popup quick theme list</h2>
+        <p class="sub compact">Choose which themes appear when you click the extension icon.</p>
+        <div id="quick-theme-list" class="quick-list"></div>
+        <div class="actions">
+          <button type="button" class="primary" id="save-quick-list">Save popup list</button>
+        </div>
+      </section>
+
+      <section>
+        <h2>Reset</h2>
+        <button type="button" class="danger" id="reset-all">Reset everything to defaults</button>
+      </section>
+
+      <p class="status" id="status"></p>
+    </div>
+
+    <script src="../shared/constants.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/presets.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

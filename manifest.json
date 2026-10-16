@@ -1,0 +1,67 @@
+{
+  "manifest_version": 3,
+  "name": "GPT Themes",
+  "version": "0.8.31",
+  "description": "ChatGPT viewer toolbar and composer compatibility, custom sidebar logos, semantic code-block themes, and new tabs for Library, Scheduled, Plugins, chats, and projects.",
+  "permissions": [
+    "storage",
+    "unlimitedStorage"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "GPT Themes"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
+      ],
+      "js": [
+        "content/navigation-tab-guard.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
+      ],
+      "js": [
+        "shared/constants.js",
+        "shared/storage.js",
+        "shared/presets.js",
+        "content/branding.js",
+        "content/theme-engine.js",
+        "content/composer-caret-guard.js",
+        "content/menu-surface-guard.js",
+        "content/code-block-guard.js",
+        "content/compatibility-probe.js",
+        "content/target-registry.js",
+        "content/theme-builder.js",
+        "content/content.js"
+      ],
+      "css": [
+        "content/injected.css",
+        "content/polished-editor.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background/navigation-tabs.js"
+  }
+}

@@ -1,0 +1,437 @@
+#gptt-editor-root {
+  all: initial;
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 392px;
+  max-height: calc(100vh - 36px);
+  z-index: 2147483646;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #eef2ff;
+}
+#gptt-editor-root *, #gptt-editor-root *::before, #gptt-editor-root *::after { box-sizing: border-box; font-family: inherit; }
+.gptt-panel { overflow: hidden; border: 1px solid rgba(255,255,255,.14); border-radius: 22px; background: radial-gradient(circle at top left, rgba(99,102,241,.22), transparent 36%), linear-gradient(180deg, rgba(19,22,33,.98), rgba(10,12,18,.985)); box-shadow: 0 24px 80px rgba(0,0,0,.50); backdrop-filter: blur(22px); }
+.gptt-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.09); }
+.gptt-brand { display: grid; gap: 2px; }
+.gptt-title { font-size: 14px; font-weight: 780; letter-spacing: .01em; color: #f8fafc; }
+.gptt-subtitle { font-size: 11px; color: rgba(238,242,255,.62); }
+.gptt-icon-button { appearance: none; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: #eef2ff; width: 32px; height: 32px; border-radius: 12px; cursor: pointer; font-size: 16px; }
+.gptt-body { overflow-y: auto; max-height: calc(100vh - 104px); padding: 14px; }
+.gptt-section { padding: 13px; border: 1px solid rgba(255,255,255,.09); border-radius: 18px; background: rgba(255,255,255,.045); margin-bottom: 12px; }
+.gptt-section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 11px; font-size: 12px; font-weight: 730; letter-spacing: .02em; color: rgba(238,242,255,.92); }
+.gptt-pill { font-size: 10px; padding: 3px 7px; border-radius: 999px; color: rgba(238,242,255,.75); background: rgba(255,255,255,.08); white-space: nowrap; }
+.gptt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gptt-target-card { appearance: none; text-align: left; border: 1px solid rgba(255,255,255,.1); border-radius: 15px; padding: 10px; background: rgba(255,255,255,.055); color: #eef2ff; cursor: pointer; transition: transform .12s ease, background .12s ease, border-color .12s ease; min-height: 64px; }
+.gptt-target-card:hover, .gptt-target-card[data-active="true"] { transform: translateY(-1px); background: rgba(99,102,241,.16); border-color: rgba(129,140,248,.58); }
+.gptt-target-name { display: block; font-size: 12px; font-weight: 700; }
+.gptt-target-desc { display: block; margin-top: 3px; font-size: 10.5px; line-height: 1.25; color: rgba(238,242,255,.62); }
+.gptt-field { display: grid; gap: 7px; margin-bottom: 11px; }
+.gptt-field label { font-size: 11px; color: rgba(238,242,255,.72); }
+.gptt-field input[type="color"] { width: 100%; height: 36px; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; background: rgba(255,255,255,.07); padding: 4px; cursor: pointer; }
+.gptt-field input[type="range"] { width: 100%; }
+.gptt-field input[type="text"], .gptt-field select { width: 100%; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; padding: 9px 10px; color: #eef2ff; background: rgba(0,0,0,.22); outline: none; }
+.gptt-file-row, .gptt-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gptt-file-button, .gptt-primary-button, .gptt-secondary-button, .gptt-danger-button { appearance: none; border: 1px solid rgba(255,255,255,.12); border-radius: 13px; padding: 9px 11px; font-size: 12px; font-weight: 690; cursor: pointer; }
+.gptt-file-button, .gptt-secondary-button { background: rgba(255,255,255,.08); color: #eef2ff; }
+.gptt-primary-button { background: linear-gradient(135deg, #818cf8, #4f46e5); color: #ffffff; border-color: rgba(255,255,255,.12); }
+.gptt-danger-button { background: rgba(239,68,68,.14); color: #fecaca; border-color: rgba(239,68,68,.26); }
+.gptt-file-name-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 28px; padding: 7px 9px; border-radius: 12px; background: rgba(0,0,0,.18); color: rgba(238,242,255,.72); font-size: 11px; overflow: hidden; }
+.gptt-file-name-line span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gptt-file-name-line button { flex: 0 0 auto; width: 28px; padding: 5px; }
+.gptt-hidden-file { display: none !important; }
+.gptt-muted { color: rgba(238,242,255,.54); font-size: 11px; line-height: 1.35; }
+.gptt-toast { position: absolute; right: 8px; bottom: -42px; padding: 10px 12px; border-radius: 13px; background: rgba(15,23,42,.96); border: 1px solid rgba(255,255,255,.12); font-size: 12px; color: #eef2ff; box-shadow: 0 16px 48px rgba(0,0,0,.35); opacity: 0; transform: translateY(-4px); transition: .18s ease; pointer-events: none; }
+.gptt-toast[data-visible="true"] { opacity: 1; transform: translateY(0); }
+#gptt-mini-launcher { all: initial; position: fixed; right: 18px; bottom: 18px; z-index: 2147483646; width: 46px; height: 46px; border-radius: 16px; border: 1px solid rgba(255,255,255,.18); background: linear-gradient(135deg, #818cf8, #22c55e); color: white; box-shadow: 0 18px 52px rgba(0,0,0,.42); cursor: pointer; font: 800 18px/46px system-ui; text-align:center; }
+.gptt-highlight, .gptt-multi-highlight { position: fixed; z-index: 2147483645; pointer-events: none; border: 2px solid #818cf8; box-shadow: 0 0 0 1px rgba(255,255,255,.26), 0 0 28px rgba(129,140,248,.28); background: rgba(129,140,248,.10); }
+
+/* v0.6.1 simplified editor refinements */
+#gptt-editor-root { width: 360px; }
+.gptt-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gptt-label-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.gptt-color-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.gptt-reset-button {
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: rgba(255,255,255,.075);
+  color: rgba(238,242,255,.82);
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.gptt-reset-button:hover { background: rgba(98,217,159,.14); border-color: rgba(98,217,159,.42); }
+.gptt-collapsible details { display: grid; gap: 10px; }
+.gptt-collapsible summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 760;
+  color: rgba(238,242,255,.92);
+  list-style-position: inside;
+}
+.gptt-collapsible details[open] summary { margin-bottom: 10px; }
+.gptt-field select { min-height: 38px; }
+
+/* v0.6.2 dropdown contrast fix */
+#gptt-editor-root select,
+#gptt-editor-root select:focus {
+  color: #eef2ff !important;
+  background-color: #111827 !important;
+  border-color: rgba(129,140,248,.56) !important;
+  color-scheme: dark;
+}
+#gptt-editor-root select option {
+  color: #eef2ff !important;
+  background-color: #111827 !important;
+}
+#gptt-editor-root select option:checked {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* v0.7 production editor refinements */
+#gptt-editor-root { width: 380px; }
+.gptt-body { max-height: calc(100vh - 104px); }
+.gptt-actions-3 { grid-template-columns: 1fr 1fr 1fr; }
+#gptt-mini-launcher {
+  overflow: visible;
+  display: grid !important;
+  place-items: center;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+}
+#gptt-mini-launcher span { display: block; line-height: 46px; transform: translateY(-1px); }
+#gptt-mini-launcher em {
+  all: unset;
+  position: absolute;
+  right: 56px;
+  top: 50%;
+  transform: translateY(-50%) translateX(8px);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  background: rgba(15,23,42,.94);
+  color: #eef2ff;
+  font: 700 12px/1 system-ui;
+  box-shadow: 0 12px 36px rgba(0,0,0,.35);
+  transition: opacity .16s ease, transform .16s ease;
+}
+#gptt-mini-launcher:hover {
+  transform: translateY(-2px) scale(1.04);
+  filter: saturate(1.08);
+  border-color: rgba(255,255,255,.38);
+  box-shadow: 0 0 0 6px rgba(129,140,248,.12), 0 22px 64px rgba(0,0,0,.48);
+}
+#gptt-mini-launcher:hover em { opacity: 1; transform: translateY(-50%) translateX(0); }
+.gptt-area-picker { position: relative; }
+.gptt-area-button {
+  width: 100%;
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid rgba(129,140,248,.42);
+  border-radius: 14px;
+  padding: 11px 12px;
+  background: linear-gradient(180deg, rgba(15,23,42,.86), rgba(10,14,23,.92));
+  color: #eef2ff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+.gptt-area-button:hover { border-color: rgba(129,140,248,.72); background: rgba(30,41,59,.92); }
+.gptt-area-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 2147483647;
+  padding: 8px;
+  border: 1px solid rgba(129,140,248,.36);
+  border-radius: 16px;
+  background: rgba(10,14,23,.98);
+  box-shadow: 0 24px 72px rgba(0,0,0,.55);
+}
+.gptt-area-menu[hidden] { display: none !important; }
+.gptt-area-menu input {
+  width: 100%;
+  margin-bottom: 7px;
+  padding: 9px 10px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 12px;
+  background: rgba(255,255,255,.06);
+  color: #eef2ff;
+  outline: none;
+}
+.gptt-area-list { max-height: 260px; overflow: auto; display: grid; gap: 5px; }
+.gptt-area-item {
+  appearance: none;
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  text-align: left;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: #eef2ff;
+  cursor: pointer;
+}
+.gptt-area-item strong { font-size: 12px; }
+.gptt-area-item span { font-size: 10.5px; color: rgba(238,242,255,.58); line-height: 1.25; }
+.gptt-area-item:hover, .gptt-area-item[data-active="true"] { background: rgba(129,140,248,.14); border-color: rgba(129,140,248,.38); }
+.gptt-preset-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.gptt-preset-card {
+  appearance: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 14px;
+  padding: 10px 11px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035)),
+    rgba(0,0,0,.14);
+  color: rgba(238,242,255,.92);
+  font-size: 12px;
+  font-weight: 720;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
+}
+.gptt-preset-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle at 18% 0%, rgba(129,140,248,.14), transparent 42%);
+  opacity: .58;
+}
+.gptt-preset-label,
+.gptt-preset-apply {
+  position: relative;
+  z-index: 1;
+}
+.gptt-preset-apply {
+  opacity: 0;
+  transform: translateX(-3px);
+  color: rgba(238,242,255,.62);
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  transition: opacity .14s ease, transform .14s ease;
+}
+.gptt-preset-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(129,140,248,.42);
+  background:
+    linear-gradient(180deg, rgba(129,140,248,.13), rgba(255,255,255,.04)),
+    rgba(0,0,0,.18);
+  box-shadow: 0 10px 28px rgba(0,0,0,.22);
+}
+.gptt-preset-card:hover .gptt-preset-apply {
+  opacity: 1;
+  transform: translateX(0);
+}
+.gptt-preview {
+  margin-top: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 16px;
+  background: rgba(0,0,0,.16);
+}
+.gptt-preview-sidebar { padding: 10px; display: grid; gap: 7px; }
+.gptt-preview-sidebar div { padding: 8px 10px; border: 1px solid transparent; font-size: 12px; }
+.gptt-preview-chat { min-height: 72px; padding: 12px; display: grid; align-items: center; }
+.gptt-preview-text { display: grid; gap: 4px; font-size: 12px; }
+.gptt-preview-text span { opacity: .72; }
+.gptt-preview-bubble { justify-self: end; max-width: 75%; padding: 10px 12px; font-size: 12px; }
+.gptt-preview-composer { padding: 12px; }
+.gptt-preview-input { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px solid; padding: 8px 8px 8px 12px; font-size: 12px; }
+.gptt-preview-input button { width: 28px; height: 28px; border: 0; font-weight: 800; }
+.gptt-preview-code { margin: 0; padding: 12px; border: 1px solid; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.gptt-quick-actions .gptt-secondary-button,
+.gptt-quick-actions .gptt-danger-button { padding-left: 6px; padding-right: 6px; }
+
+/* v0.7.2 usability polish */
+#gptt-editor-root {
+  width: 380px;
+  height: min(820px, calc(100vh - 36px));
+  min-width: 330px;
+  min-height: 460px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+  resize: both;
+  overflow: hidden;
+}
+#gptt-editor-root .gptt-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+#gptt-editor-root .gptt-header {
+  flex: 0 0 auto;
+  cursor: move;
+  user-select: none;
+}
+#gptt-editor-root .gptt-header button { cursor: pointer; }
+#gptt-editor-root .gptt-body {
+  flex: 1 1 auto;
+  max-height: none;
+  min-height: 0;
+  scrollbar-width: thin;
+}
+.gptt-section { padding: 12px; }
+.gptt-preset-row {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 7px;
+  max-height: 184px;
+  overflow: auto;
+  padding-right: 2px;
+}
+.gptt-preset-card {
+  min-height: 34px;
+  padding: 8px 9px;
+  border-radius: 12px;
+  gap: 6px;
+}
+.gptt-preset-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11.5px;
+}
+.gptt-preset-kind {
+  position: relative;
+  z-index: 1;
+  margin-left: auto;
+  color: rgba(238,242,255,.48);
+  font-size: 9.5px;
+  font-weight: 740;
+  text-transform: uppercase;
+  letter-spacing: .025em;
+}
+.gptt-preset-apply { display: none; }
+.gptt-preset-card:hover .gptt-preset-kind { display: none; }
+.gptt-preset-card:hover .gptt-preset-apply { display: inline; }
+.gptt-preset-card[data-active="true"] {
+  border-color: rgba(34,197,94,.52);
+  box-shadow: inset 0 0 0 1px rgba(34,197,94,.22);
+}
+.gptt-preset-card[data-active="true"]::after {
+  content: "✓";
+  position: absolute;
+  right: 8px;
+  top: 7px;
+  z-index: 2;
+  color: rgba(187,247,208,.92);
+  font-size: 11px;
+}
+.gptt-preset-card[data-active="true"] .gptt-preset-kind,
+.gptt-preset-card[data-active="true"] .gptt-preset-apply { padding-right: 12px; }
+#gptt-mini-launcher {
+  touch-action: none;
+  user-select: none;
+}
+#gptt-mini-launcher .gptt-launcher-close {
+  all: unset;
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(15,23,42,.96);
+  color: rgba(255,255,255,.82);
+  font: 800 12px/1 system-ui;
+  opacity: 0;
+  transform: scale(.86);
+  cursor: pointer;
+  transition: opacity .14s ease, transform .14s ease, background .14s ease;
+}
+#gptt-mini-launcher:hover .gptt-launcher-close {
+  opacity: 1;
+  transform: scale(1);
+}
+#gptt-mini-launcher .gptt-launcher-close:hover {
+  background: rgba(239,68,68,.9);
+  color: white;
+}
+@media (max-width: 720px) {
+  #gptt-editor-root {
+    left: 8px !important;
+    right: 8px !important;
+    top: 8px !important;
+    width: auto;
+    height: calc(100vh - 16px);
+    resize: none;
+  }
+  .gptt-actions-3 { grid-template-columns: 1fr; }
+  .gptt-mini-grid { grid-template-columns: 1fr; }
+  .gptt-preset-row { grid-template-columns: 1fr 1fr; max-height: 150px; }
+}
+
+/* v0.8 simple/advanced theme designer */
+.gptt-linked-field {
+  padding: 9px;
+  border: 1px solid rgba(255,255,255,.075);
+  border-radius: 14px;
+  background: rgba(0,0,0,.105);
+}
+.gptt-control-hint {
+  margin-top: -3px;
+  color: rgba(238,242,255,.46);
+  font-size: 10.5px;
+  line-height: 1.25;
+}
+.gptt-alpha-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 9px;
+  color: rgba(238,242,255,.62);
+  font-size: 10.5px;
+}
+.gptt-alpha-row input[type="range"] { width: 100%; }
+.gptt-alpha-row strong {
+  min-width: 34px;
+  text-align: right;
+  color: rgba(238,242,255,.82);
+  font-size: 10.5px;
+}
+.gptt-advanced-section summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.gptt-advanced-section summary::after {
+  content: "Power users";
+  font-size: 10px;
+  font-weight: 740;
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: rgba(238,242,255,.64);
+  background: rgba(255,255,255,.07);
+}
+.gptt-subsection-title {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+
+

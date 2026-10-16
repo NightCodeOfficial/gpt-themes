@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ChatGPT UI Enhancer</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <h1 class="title">ChatGPT UI Enhancer</h1>
+      <label class="row">
+        <input type="checkbox" id="enabled" />
+        <span>Enable on chatgpt.com</span>
+      </label>
+      <p class="hint">Quick themes</p>
+      <p class="custom-note" id="custom-note" hidden>Custom theme active</p>
+      <div id="preset-list" class="preset-list"></div>
+      <button class="builder-btn" id="open-builder" type="button">Open Theme Builder</button>
+      <a class="link" href="#" id="open-options">Manage themes &amp; popup list…</a>
+    </main>
+    <script src="../shared/constants.js"></script>
+    <script src="../shared/storage.js"></script>
+    <script src="../shared/presets.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

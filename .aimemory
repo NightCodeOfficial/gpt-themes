@@ -1,0 +1,382 @@
+# AI Project Memory
+
+> This file is maintained by TransferLoop. It gives a new AI conversation durable project context plus a short recent history of changes actually accepted into the local project.
+
+## Project Overview
+
+**Project:** gpt themes
+
+gpt themes is a software project managed with TransferLoop. No custom project description has been entered yet; inspect the current files for authoritative implementation details.
+
+## Technical Snapshot
+
+- Primary technologies detected: JavaScript
+- Top-level folders: assets, content, options, popup, shared
+
+## Current Direction
+
+- Maintain GPT Themes as a native-page-first cosmetic extension, adapting to ChatGPT DOM changes with narrow resilient selectors instead of replacing native UI.
+- Track current ChatGPT component-level native variables in addition to older surface tokens; prefer scoped token compatibility over broad repainting.
+- Use live computed-style/paint traces to identify actual ChatGPT painters before adding compatibility overrides; avoid selector/token guesses when the live DOM can be measured.
+
+## Architecture & Important Decisions
+
+- v0.8.14 treats form[data-type='unified-composer'] as the current primary composer while retaining older composer fallbacks.
+- Sidebar styling targets known expanded, collapsed, and popover roots rather than generic aside elements.
+- User-message transparency is scoped to actual message-bubble surfaces so attachments and file cards retain their native surfaces.
+- Current ChatGPT composer theming should target the explicit data-composer-surface shell rather than globally overriding native border tokens.
+- Transient menus and command pickers must be fully opaque; support the browser Popover API (:popover-open) as well as semantic/Radix fallbacks.
+- Main-surface transparency for image-backed themes should be scoped to the chat canvas rather than applied globally to every main-surface utility class.
+- Transient ChatGPT menus must use a guaranteed opaque elevated-surface color even when the active theme intentionally makes chat or assistant surfaces transparent.
+- The injected 'Filter visible projects' feature has been removed from GPT Themes.
+- Current ChatGPT + and slash-command menus are protected by a targeted runtime menu-surface guard rather than broad generic popover styling.
+- The menu guard applies opacity and elevated-surface colors directly to the detected live menu container with inline !important priority.
+- Map the current ChatGPT --sidebar-bg token to theme.sidebarBg and reinforce it on known sidebar roots so the entire expanded sidebar uses one continuous configured surface.
+- The transient menu-surface detector must explicitly exclude ChatGPT sidebar roots and structural navigation rails before applying cgpt-ui-menu-surface.
+
+## Constraints & Conventions
+
+- Preserve native ChatGPT behavior and avoid broad selectors or native CSS-variable overrides that can unintentionally restyle Work, menus, cards, dialogs, or future controls.
+- Do not recolor the already-correct ChatGPT/New chat header block to match an accidental elevated-surface fallback; fix the sidebar body token instead.
+- Do not change the working opaque + and slash-command menu treatment while fixing sidebar false positives.
+
+## Open Work
+
+- Live-test v0.8.14 across Chat, Work, collapsed sidebar, mobile/narrow popover sidebar, long pasted drafts, and messages with file attachments after import.
+- Live-test v0.8.16 with the + menu and slash-command menu open, then verify the composer edge remains subtle across saved themes and image-backed themes.
+- Live-test v0.8.17 with both the + menu and slash-command menu open; if any specific transient surface still escapes the native elevated-token guard, capture that open menu DOM for targeted follow-up.
+- Live-test v0.8.18 with both the + menu and slash-command menu; if either remains transparent, use the captured live menu-surface report to identify the exact remaining painted layer.
+- Live-test v0.8.22 with the expanded sidebar and confirm the header and scrollable sidebar body now use one continuous surface color.
+- Live-test v0.8.23 and confirm the expanded sidebar scrollport no longer receives cgpt-ui-menu-surface and the full sidebar remains one continuous color.
+- After v0.8.24 import, verify native ChatGPT wordmark at upper left, collapsed/sidebar-popover layouts, chat-only background offsets, Chat/Work, and +/slash-command menus on the live September browser UI.
+
+## Project Notes
+
+- A passive diagnostic is available in the page context as CgptUiEnhancer.getCompatibilityReport() to help identify future selector drift.
+- The supplied September 2026 ChatGPT snapshot shows form[data-type=unified-composer] containing a stable data-composer-surface element and native popover attributes in the current UI.
+- Current ChatGPT dark-mode shadow-short-composer includes a light inset shadow; GPT Themes should replace that effect when applying a custom composer surface.
+- Current ChatGPT touch-optimized menus use --bg-elevated-primary; mapping that native elevated token to chatAreaBg can make menus transparent in image-backed themes.
+- Current menu variants can expose native .__menu-item rows even when ARIA menu roles or earlier Radix content attributes are absent on the painted surface.
+- v0.8.18 exposes CgptUiEnhancer.inspectOpenMenus() and includes the last live menu-surface report in compatibility diagnostics for future ChatGPT DOM drift.
+- Current ChatGPT expanded sidebar builds can use --sidebar-bg with a fallback to --bg-elevated-secondary, while the sticky header still uses sidebar-surface-primary.
+- The live paint trace proved the sidebar mismatch was caused by GPT Themes: the scrollport nav inside #stage-slideover-sidebar was falsely marked cgpt-ui-menu-surface and painted #2f2f2f while the actual sidebar surfaces were correctly #171717.
+- The September 26, 2026 ChatGPT browser snapshot uses #app-shell-sidebar inside aside.app-shell-left-panel, and a fixed main header[data-app-shell-titlebar=true] spanning the entire viewport. Theme header painting must leave its left-panel portion transparent when the native sidebar is expanded so the existing native ChatGPT wordmark remains visible.
+- The September 28, 2026 ChatGPT fenced-code renderer uses data-markdown-copy="code-block" and may render code directly inside a scrollport with no <pre> element. Treat that semantic data attribute as the primary fenced-code surface and retain pre-based handling only as a legacy fallback.
+- Do not apply generic background-color rules to every .markdown code element: in the current renderer that paints a narrow code-row strip inside the fenced-code shell. Paint the semantic code-block shell and keep its descendant code/pre surfaces transparent instead.
+
+## Important Memory Rules
+
+- Current project files are authoritative if this memory ever becomes stale.
+- Change-history entries below describe changes accepted through TransferLoop, not merely changes an AI proposed.
+- AI assistants should not modify this file during normal implementation work unless the user explicitly asks them to.
+
+## Accepted Change History
+
+> Older detailed TransferLoop history was compacted from `.aimemory`. The application's own history retains the full audit trail.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-15 12:20 — Updated GPT Themes to v0.8.18 with a live menu-surface guard that finds the actual current ChatGPT + and slash-command menu container and forces that exact surface opaque at inline !important priority, while retaining diagnostics for future DOM changes.
+
+**Accepted changes**
+
+- **Modified:** `content/compatibility-probe.js`
+  - Updated compatibility diagnostics for v0.8.18 and included the live menu-surface report.
+  - Reports how many menu surfaces were guarded and the detected surface's computed background, position, elevated variable, attributes, dimensions, and parent background.
+- **Modified:** `content/content.js`
+  - Refreshes the live menu-surface guard whenever GPT Themes reapplies the active theme.
+  - Ensures already-open menu surfaces pick up a newly selected theme color immediately.
+- **Modified:** `content/injected.css`
+  - Replaced the broad v0.8.17 transient-menu overrides with exact current menu-surface and runtime-marker styling.
+  - Targets ChatGPT's current data-content-appearance=touch-optimized surface and the runtime .cgpt-ui-menu-surface marker.
+  - Keeps native menu-item hover and selection styling intact while making only the surface underneath the rows opaque.
+  - Removes the previous broad .popover/role/Radix wrapper repaint rules to reduce unintended styling.
+- **Added:** `content/menu-surface-guard.js`
+  - Added a targeted runtime guard for current ChatGPT floating menu surfaces.
+  - Detects the current touch-optimized menu surface and semantic/Radix menu variants from their live menu items.
+  - Falls back to the smallest plausible floating list container instead of repainting broad application wrappers.
+  - Forces the detected surface background and elevated-surface variables inline with !important priority so later ChatGPT stylesheet injection cannot make it transparent.
+  - Exposes inspectOpenMenus() and a structured last-menu report for future troubleshooting.
+- **Modified:** `manifest.json`
+  - Bumped GPT Themes to v0.8.18 and registered the live menu-surface guard content script.
+  - No new extension permissions were added.
+  - The guard loads after the theme engine and before compatibility diagnostics.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-15 12:23 — Update GPT Themes to v0.8.19 and narrow the live menu opacity fix so it no longer contaminates inherited ChatGPT surface variables used by individual menu options.
+
+**Accepted changes**
+
+- **Modified:** `content/compatibility-probe.js`
+  - Report v0.8.19 in compatibility diagnostics.
+- **Modified:** `content/injected.css`
+  - Narrow the opaque menu CSS to the menu surface itself.
+  - Removes inherited surface-variable overrides, text overrides, isolation, and item-level styling from the menu fix.
+  - Leaves ChatGPT's native menu-row hover, badges, shortcut chips, and nested control styling intact.
+- **Modified:** `content/menu-surface-guard.js`
+  - Restrict the runtime menu fix to the detected menu container's own painted background.
+  - Stops overriding inherited --bg-*, --main-surface-*, and related ChatGPT variables that nested menu rows and controls reuse.
+  - Retains inline !important background-color/background-image/opacity on the detected live surface so the opacity fix continues to work.
+  - Adds menu-item background samples to the diagnostic report for easier future troubleshooting.
+- **Modified:** `manifest.json`
+  - Bump GPT Themes to v0.8.19.
+  - Updates the extension description to reflect narrowly scoped live menu-surface guarding.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-15 12:39 — Update GPT Themes to v0.8.20 and remove the remaining dark/light menu-option boxes by neutralizing ChatGPT's menu-item state fills only inside the detected + and slash-command menus.
+
+**Accepted changes**
+
+- **Modified:** `content/compatibility-probe.js`
+  - Report v0.8.20 in compatibility diagnostics.
+- **Modified:** `content/injected.css`
+  - Remove the residual highlighted/active/open row boxes inside opaque ChatGPT menus.
+  - Keeps the v0.8.19 opaque live menu surface unchanged.
+  - Overrides --menu-item-background, --menu-item-highlighted, --menu-item-active, --menu-item-open, and --menu-item-pressed to transparent only within live/touch-optimized menu surfaces.
+  - Adds direct transparent background enforcement for hover, focus, highlighted, active, and open menu-item states to beat ChatGPT's resolved state rules without changing global surface tokens.
+  - Leaves menu icon styling, layout, typography, and the rest of ChatGPT's menu system untouched.
+- **Modified:** `manifest.json`
+  - Bump GPT Themes to v0.8.20.
+  - Updates the extension description to include clean menu-item state handling.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-15 13:28 — Update GPT Themes to v0.8.21 and fix the dark ChatGPT wordmark/header box by separating the current sidebar header from the main conversation header.
+
+**Accepted changes**
+
+- **Modified:** `content/compatibility-probe.js`
+  - Report v0.8.21 in compatibility diagnostics.
+- **Modified:** `content/injected.css`
+  - Stop styling the sidebar wordmark row as the main page header.
+  - Removes the broad [class*=h-header-height] header selector that matched #sidebar-header.
+  - Targets #page-header and main header fallbacks for the configurable top-header surface.
+  - Keeps #sidebar-header transparent so the sidebar background remains visually continuous.
+  - Leaves the working composer and menu fixes unchanged.
+- **Modified:** `content/target-registry.js`
+  - Correct Theme Builder header classification for the current ChatGPT layout.
+  - Adds a dedicated current main-header selector set based on #page-header.
+  - Removes h-header-height from top-header detection.
+  - Explicitly prevents sidebar elements from matching the Top header target.
+- **Modified:** `manifest.json`
+  - Bump GPT Themes to v0.8.21.
+  - Updates the extension description to reflect corrected current header/sidebar targeting.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-21 10:53 — Update GPT Themes to v0.8.22 so the current ChatGPT expanded sidebar body uses the same configured sidebar color as the ChatGPT/New chat header block.
+
+**Accepted changes**
+
+- **Modified:** `content/compatibility-probe.js`
+  - Report v0.8.22 in compatibility diagnostics.
+- **Modified:** `content/injected.css`
+  - Reinforce the current sidebar background token on known sidebar roots and current sidebar-bg utilities.
+  - Leaves the ChatGPT/New chat header block unchanged and brings the scrollable sidebar body to the same themed surface.
+  - Scopes the compatibility rule to ChatGPT sidebar roots so opaque transient menus remain unaffected.
+  - Retains all v0.8.20-v0.8.21 composer, menu, and header fixes.
+- **Modified:** `content/theme-engine.js`
+  - Map ChatGPT's current --sidebar-bg token to the configured GPT Themes sidebar color.
+  - Keeps the newer expanded-sidebar body from falling back to --bg-elevated-secondary.
+  - Preserves the existing sidebar-surface token mappings for older/current phased layouts.
+- **Modified:** `manifest.json`
+  - Bump GPT Themes to v0.8.22.
+  - Updates the extension description for current sidebar-token compatibility.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-21 17:10 — Update GPT Themes to v0.8.23 using the live sidebar paint trace to prevent the transient-menu detector from repainting the structural ChatGPT sidebar.
+
+**Accepted changes**
+
+- **Modified:** `content/compatibility-probe.js`
+  - Report v0.8.23 and expose sidebar menu-surface false positives in compatibility diagnostics.
+  - Adds sidebarMenuSurfaceFalsePositives so this exact regression is immediately visible in future reports.
+- **Modified:** `content/injected.css`
+  - Add a CSS-variable failsafe for a stale sidebar nav accidentally carrying the menu-surface marker.
+  - The exact false-positive shape from the live trace resolves the guard's inline overlay background back to the configured sidebar color.
+  - Existing composer, menu-row, sidebar-token, and header behavior remains unchanged.
+- **Modified:** `content/menu-surface-guard.js`
+  - Exclude ChatGPT sidebar structures from live menu-surface detection and clean stale false-positive styling.
+  - Rejects items and candidate surfaces inside expanded, collapsed, popover, and Chat History sidebar roots.
+  - Removes the cgpt-ui-menu-surface marker and guard-owned inline background/opacity styles from any sidebar element previously misclassified.
+  - Adds a secondary safeguard that rejects viewport-tall structural nav elements from fallback menu detection.
+  - Preserves runtime detection and opaque styling for the actual + and slash-command transient menus.
+- **Modified:** `manifest.json`
+  - Bump GPT Themes to v0.8.23.
+  - Updates the extension description for sidebar-safe live menu detection.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-26 11:27 — GPT Themes v0.8.24 adapts to the September 2026 native app-shell layout and restores the ChatGPT wordmark hidden by full-width themed titlebar painting.
+
+**Accepted changes**
+
+- **Modified:** `content/compatibility-probe.js`
+  - Report new app-shell sidebar, native wordmark, full-width titlebar and computed titlebar paint.
+  - Add new sidebar and rail detection and extend false-positive menu diagnostics.
+  - Preserve older sidebar and unified-composer reporting.
+- **Modified:** `content/injected.css`
+  - Restore the native ChatGPT wordmark on the September 2026 layout without replacing native markup.
+  - Leave the portion of the fixed titlebar over the expanded sidebar transparent; retain configured header color on the chat side.
+  - Keep the new native sidebar shell, painted navigation layer and toolbar on one themed surface; support RTL.
+  - Keep old layouts and transient menus scoped separately.
+- **Modified:** `content/menu-surface-guard.js`
+  - Exclude new app-shell navigation from transient-menu detection.
+  - Remove stale false-positive menu markers in the new sidebar as well as previous sidebar layouts.
+- **Modified:** `content/target-registry.js`
+  - Recognize new app-shell sidebar and titlebar in theme picking.
+  - Extend native sidebar logo/icon targeting without introducing broad aside selectors.
+- **Modified:** `content/theme-engine.js`
+  - Measure the new app-shell sidebar and handle its collapsed and mobile states.
+  - Skip mounted but collapsed or inert sidebar roots when computing background-image offsets.
+  - Keep prior sidebar and popover support.
+- **Modified:** `manifest.json`
+  - Bump extension to v0.8.24 and describe app-shell support.
+- **Modified:** `shared/constants.js`
+  - Register new native app-shell sidebar and navigation rail selectors.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-26 11:53 — GPT Themes v0.8.25 cumulatively preserves the September app-shell titlebar/sidebar fixes and restores Ctrl/Cmd-click and middle-click new-tab navigation for chats and Projects.
+
+**Accepted changes**
+
+- **Added:** `background/navigation-tabs.js`
+  - Create new tabs from validated ChatGPT navigation requests without relying on popups.
+  - Validate both the content-script sender origin and requested chat/project route.
+  - Create the new tab beside the current tab, background by default.
+- **Modified:** `content/compatibility-probe.js`
+  - Preserve v0.8.24 app-shell diagnostics and report the navigation guard state and handled-click count.
+  - Includes the prior sidebar/header compatibility updates.
+  - Exposes navigationTabGuard under currentUi for future UI regressions.
+- **Added:** `content/navigation-tab-guard.js`
+  - Restore Ctrl/Cmd-click and middle-click on chat links and project rows using early capture-phase navigation.
+  - Use native chat anchor hrefs and explicit project IDs; support direct project-page chat links and padded sidebar rows.
+  - Leave normal clicks, project action menus, external links, keyboard controls, and inactive themes untouched.
+  - Request a neighboring background tab, or a foreground tab for modified Shift+click; prevent native duplicate tabs/autoscroll.
+  - Start at document_start before SPA click handlers and expose lightweight diagnostic counters.
+- **Modified:** `manifest.json`
+  - Bump to v0.8.25; register document_start navigation guard and background tab worker.
+  - Retain all v0.8.24 theme/content scripts and existing permissions; no new permission prompts.
+- **Added:** `tests/navigation-tab-guard.test.js`
+  - Add dependency-free Node regression tests for chat/project modifier navigation and security boundaries.
+  - Covers native chat anchors, linkless projects, middle-click autoscroll, nested action buttons, disabled mode, background worker and manifest.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-26 15:26 — GPT Themes v0.8.26 cumulatively retains the September header/sidebar fixes, modified-click navigation for chats and Projects, and adds new-tab behavior for global New chat and project-row pencil actions.
+
+**Accepted changes**
+
+- **Modified:** `background/navigation-tabs.js`
+  - Validate and open the canonical blank-chat route in addition to existing chat and Project destinations.
+  - Accept only the exact HTTPS ChatGPT home path with no query/fragment for blank chats.
+  - Preserve sender-host validation, strict chat/project paths and the existing neighboring-tab behavior.
+- **Modified:** `content/navigation-tab-guard.js`
+  - Extend modifier-click handling to the current New chat actions, including the project-row pencil icon.
+  - Ctrl/Cmd-click or middle-click on the New chat button opens the empty global chat composer in a neighboring tab.
+  - Includes the unlabeled, text-only New chat button in the expanded September sidebar and accessible icon variants.
+  - The pencil button inside a validated Project row opens that Project in a separate tab with an empty project-specific composer.
+  - Use the Project row ID, not its displayed label. Never send unknown or invalid project buttons to a different project.
+  - Normal clicks, context menus, disabled controls, non-ChatGPT URLs and the master disabled setting remain unaffected.
+  - Middle click is background by default; modified Shift opens the neighboring tab in the foreground.
+- **Modified:** `manifest.json`
+  - Bump GPT Themes to v0.8.26 and describe expanded ChatGPT navigation compatibility.
+  - Preserve all prior CSS/theme compatibility fixes, document_start guard and service worker.
+  - No new permissions, third-party scripts or dependencies.
+- **Modified:** `tests/navigation-tab-guard.test.js`
+  - Add regression tests for current New chat buttons, Project pencil icons and navigation safety.
+  - Covers the unlabeled expanded-sidebar New chat row captured in the September HTML snapshot.
+  - Covers the accessible project pencil icon, phased Project DOM fallback, Mac Cmd-click and disabled controls.
+  - Covers canonical home-route validation in the background worker; retains all original navigation tests.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-26 15:35 — GPT Themes v0.8.27 extends Ctrl/Cmd-click and middle-click to Library, Scheduled, Plugins, and actual internal page links while preserving chat, Project, New chat, pencil, header and sidebar fixes from earlier cumulative updates.
+
+**Accepted changes**
+
+- **Modified:** `background/navigation-tabs.js`
+  - Validate new sidebar page destinations and safe same-site native links before creating adjacent tabs.
+  - Library, Scheduled and Plugins buttons use a strict synthetic route allowlist.
+  - Only actual anchors can supply additional page paths; exclude auth, API, logout, redirect and other action endpoints.
+  - Retain inactive adjacent tabs by default and foreground handling with Shift.
+- **Modified:** `content/compatibility-probe.js`
+  - Update the live compatibility report to v0.8.27 and retain recent app-shell navigation diagnostics.
+  - Matches the actual extension version; preserves previous visual compatibility probes.
+- **Modified:** `content/navigation-tab-guard.js`
+  - Add middle/Ctrl/Cmd-click navigation to linkless Library, Scheduled and Plugins sidebar buttons and support verified same-site native links.
+  - Recognize the exact live data-sidebar-destination attributes in collapsed and expanded navigation without matching translated labels.
+  - General ChatGPT anchors use their actual href, including future page routes and anchored menu items; no guessing unknown button routes.
+  - Keep global New chat, project pencil, project rows and chats working; do not alter normal clicks, menus, downloads, external sites or disabled controls.
+- **Modified:** `manifest.json`
+  - Bump extension to v0.8.27 and describe the broader new-tab navigation coverage.
+  - No new permissions, dependencies or third-party scripts.
+  - Preserves the document_start navigation guard, worker and earlier theme fixes.
+- **Modified:** `tests/navigation-tab-guard.test.js`
+  - Extend navigation regression coverage to all newly supported sidebar pages and broader real anchors.
+  - Test the actual September 26 data-sidebar-destination markers, collapsed rail, SVG click targets, Ctrl/Cmd+Shift and normal clicks.
+  - Test links inside menus and preserve action/download/external link behavior, disabled and unknown buttons, and background route validation.
+  - Retain all preexisting chat, Project and new-chat tests and check manifest/diagnostic version alignment.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-28 10:09 — GPT Themes v0.8.28 restores full fenced code-block theming after ChatGPT moved visible code surfaces to wrapper elements, while preserving the v0.8.24-v0.8.27 header, sidebar, menu and new-tab compatibility fixes.
+
+**Accepted changes**
+
+- **Added:** `content/code-block-guard.js`
+  - Add a structural compatibility guard for ChatGPT fenced code-block wrappers.
+  - Finds fenced blocks from stable pre/code semantics instead of generated class names.
+  - Marks existing native shell, body and toolbar wrappers rather than replacing ChatGPT markup.
+  - Uses a narrow styled-wrapper fallback when the copy control moves, and will not promote an entire assistant message.
+  - Observes streamed/late-rendered content and exposes a diagnostic report.
+- **Modified:** `content/compatibility-probe.js`
+  - Bump diagnostics to v0.8.28 and report fenced code-block guard health.
+  - Reports detected fenced blocks, guarded shells, fallback usage and whether the code-block guard is installed.
+- **Modified:** `content/injected.css`
+  - Theme the full native fenced code-block shell instead of only the inner pre/code nodes.
+  - Applies the configured code background/border across native shell, toolbar and body wrappers.
+  - Keeps fenced pre/code descendants transparent so they no longer create the narrow mismatched strip shown in the current ChatGPT UI.
+  - Preserves inline-code theming separately.
+- **Modified:** `content/target-registry.js`
+  - Make the theme builder select the guarded fenced-code shell when available.
+  - Code-block editing now targets the visible native wrapper first, with pre/code fallback for older renderers.
+- **Modified:** `manifest.json`
+  - Bump GPT Themes to v0.8.28 and load the code-block guard before compatibility diagnostics.
+  - No new permissions or dependencies.
+  - Preserves document-start navigation handling and previous September compatibility scripts.
+- **Added:** `tests/code-block-guard.test.js`
+  - Add regression tests for current and fallback fenced-code wrapper layouts.
+  - Covers toolbar-based detection, fallback detection, bare-pre safety, inline-code safety, manifest load order and CSS integration.
+- **Modified:** `tests/navigation-tab-guard.test.js`
+  - Keep navigation regression coverage aligned with extension v0.8.28.
+  - Only the expected manifest version changes for this release; prior navigation coverage remains intact.
+
+<!-- TL:MEMORY-ENTRY -->
+### 2026-09-28 10:22 — GPT Themes v0.8.29 fixes the current September 28 ChatGPT fenced-code renderer, which now uses data-markdown-copy="code-block" and can omit <pre> entirely. The update themes the native semantic shell directly, prevents generic inline-code backgrounds from repainting fenced code rows, and preserves the prior header, sidebar, menu, and Ctrl/middle-click compatibility fixes.
+
+**Accepted changes**
+
+- **Modified:** `content/code-block-guard.js`
+  - Support both the current no-pre semantic fenced-code renderer and legacy pre-based ChatGPT layouts.
+  - Recognizes data-markdown-copy="code-block" as the current native shell even when no pre element exists.
+  - Marks the native toolbar, body, code node, and optional pre without replacing any ChatGPT markup.
+  - Retains the narrow legacy structural fallback for older renderer variants.
+  - Exposes semanticBlockCount, legacyPreCount, fencedBlockCount, guarded shell count, and fallback diagnostics.
+- **Modified:** `content/compatibility-probe.js`
+  - Bump diagnostics to v0.8.29 and detect both current semantic fenced blocks and legacy pre-based blocks.
+  - Reports semantic fenced-code surfaces separately from legacy pre-based blocks.
+  - Uses the code-block guard's de-duplicated fencedBlockCount when available.
+- **Modified:** `content/injected.css`
+  - Theme current data-markdown-copy code-block shells directly and stop generic code backgrounds from producing a narrow strip inside fenced blocks.
+  - Paints the native fenced-code shell and toolbar while leaving the scrollport and code glyph node transparent.
+  - Uses data-markdown-copy="inline-code" for current inline-code styling with guarded legacy fallbacks.
+  - Removes duplicate broad code-background rules that could override fenced-code transparency later in the stylesheet.
+- **Modified:** `content/target-registry.js`
+  - Teach the theme builder about current semantic fenced and inline code markers.
+  - Prefers data-markdown-copy="code-block" and data-markdown-copy="inline-code" while retaining guarded and legacy pre/code fallbacks.
+- **Modified:** `manifest.json`
+  - Bump GPT Themes to v0.8.29.
+  - No new permissions or dependencies.
+  - Preserves document-start navigation handling and the code-block guard load order.
+- **Modified:** `tests/code-block-guard.test.js`
+  - Add a regression fixture matching the current September 28 no-pre code-block DOM.
+  - Verifies shell > toolbar + scrollport > code is detected and marked correctly without a pre element.
+  - Retains legacy wrapper, fallback, bare-pre safety, and inline-code safety coverage.
+  - Checks that broad markdown-code background rules no longer reintroduce the fenced-code strip.
+- **Modified:** `tests/navigation-tab-guard.test.js`
+  - Keep navigation regression coverage aligned with extension v0.8.29.
+  - Prior new-tab behavior remains covered while the expected extension version advances to v0.8.29.
